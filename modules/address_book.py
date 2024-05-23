@@ -1,3 +1,4 @@
+from datetime import date, datetime
 from collections import UserDict
 from errors import SearchError
 
@@ -31,4 +32,39 @@ class AddressBook(UserDict):
             self.search(name)
             del self.data[name]
         except SearchError as e:
-            print(f"Error! {e}")            
+            print(f"Error! {e}")
+
+
+# - Пошук найближчих днів народжень
+    def get_upcoming_birthdays(self):
+        upcoming_bd_users = []
+        current_date = date.today()
+
+        for user in self.data:
+            user_birthday = self.data[user].birthday
+            
+            if user_birthday:
+                this_year_bd = date(current_date.year, user_birthday.value.month, user_birthday.value.day)
+                is_coming = current_date < this_year_bd
+                is_next_week = (this_year_bd - current_date).days < 7
+                
+                # визначення днів народження на 7 днів вперед:
+                if is_coming and is_next_week:
+                    
+                    # Обробка випадків, коли дні народження припадають на вихідні:
+                    bd_weekday = this_year_bd.weekday()
+                    
+                    match bd_weekday:
+                        case 5:
+                            congrat_date = date(current_date.year, user_birthday.month, (user_birthday.day + 2))
+                        case 6:
+                            congrat_date = date(current_date.year, user_birthday.month, (user_birthday.day + 1))
+                        case _:
+                            congrat_date = this_year_bd
+                    
+                    congrat_date_string = congrat_date.strftime('%d-%m-%Y')
+                    bd_user = {'name' : user, 'congratulation_date': congrat_date_string}
+                    upcoming_bd_users.append(bd_user)
+            
+        print("List of congratultaions this week:", upcoming_bd_users)
+        return upcoming_bd_users
