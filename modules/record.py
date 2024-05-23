@@ -1,4 +1,4 @@
-from fields import Name, Phone
+from fields import Name, Phone, Birthday
 from errors import ValidationError
 
 
@@ -9,6 +9,8 @@ class Record:
         self.name = Name(name)
 # - зберігання списку об'єктів Phone в окремому атрибуті
         self.phones = []
+#  поле birthday для дня народження
+        self.birthday = None
 
 
 # - Додавання телефонів add_phone
@@ -18,7 +20,7 @@ class Record:
             new_phone.validate()
             self.phones.append(new_phone)
         except ValidationError as e:
-            print(f"Error! {e}")
+            print(f"ERROR! {e}")
         else:
             print(f"{phone} has 10 digits and is added to {self.name}'s phones list")
 
@@ -54,5 +56,18 @@ class Record:
         return self.wrong_phone_alert(old_phone)
 
 
+# - Додавання дня народження до контакту
+    def add_birthday(self, birthday):
+        if self.birthday:
+            print(f"Contact {self.name.value} already has a birthday record")
+        else:
+            try:
+                self.birthday = Birthday(birthday)
+            except ValidationError as e:
+                print(f"ERROR! {e}")
+            else:
+                print(f"Birthday {birthday} is added to {self.name}'s record")
+
+
     def __str__(self):
-        return f"Contact name: {self.name.value}, phones: {'; '.join(p.value for p in self.phones)}"
+        return f"Contact name: {self.name.value}, phones: {'; '.join(p.value for p in self.phones)}, birthday: {self.birthday.value if self.birthday != None else self.birthday}"

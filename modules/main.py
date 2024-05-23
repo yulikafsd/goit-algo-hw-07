@@ -10,6 +10,8 @@ if __name__ == '__main__':
     john_record = Record("John")
     john_record.add_phone("1234567890")
     john_record.add_phone("5555555555")
+    john_record.add_birthday("22.11.2023")
+    john_record.add_birthday("30.01.2023")
 
     # Додавання запису John до адресної книги
     book.add_record(john_record)

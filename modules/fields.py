@@ -1,5 +1,6 @@
 from errors import ValidationError
-
+from datetime import datetime
+import re
 
 # Field: Базовий клас для полів запису.
 class Field:
@@ -28,3 +29,14 @@ class Phone(Field):
             raise ValidationError(f'{self.value} does not have 10 digits. Please, provide a valid number')
         else:
             return self.value
+
+
+class Birthday(Field):
+    
+    def __init__(self, birthday):
+        # перевірка коректності даних
+            if re.match(r'(\d{2}\.\d{2}\.\d{4})', birthday):
+                # перетворення рядку на об'єкт datetime
+                super().__init__(datetime.strptime(birthday, '%d.%m.%Y').date())
+            else:
+                raise ValidationError(f'Invalid date format of {birthday}. Use DD.MM.YYYY')
