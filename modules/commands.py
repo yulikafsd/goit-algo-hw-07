@@ -121,7 +121,7 @@ def show_birthday(args, book: AddressBook):
         if record.birthday is None: 
             return f"{name_norm} has no birthday yet"
         else:
-            return f"{name_norm}'s birthday: {record.birthday.value.strftime("%d.%m.%Y")}"
+            return f"{name_norm}'s birthday: {record.birthday.value.strftime('%d.%m.%Y')}"
 
 
 # Показати дні народження, які відбудуться протягом наступного тижня
