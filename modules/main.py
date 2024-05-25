@@ -1,49 +1,39 @@
 from address_book import AddressBook
-from record import Record
+from commands import *
 
-if __name__ == '__main__':
 
-    # Створення нової адресної книги
-    book = AddressBook()
+def main():
+    contacts = AddressBook()
 
-    # Створення запису для John
-    john_record = Record("John")
-    john_record.add_phone("1234567890")
-    john_record.add_phone("5555555555")
-    john_record.add_birthday("27.05.1987")
-    john_record.add_birthday("30.01.2023")
+    print("Welcome to the assistant bot!")
+    
+    while True:
+        user_input = input("Enter a command: ")
+        command, *args = parse_input(user_input)
 
-    # Додавання запису John до адресної книги
-    book.add_record(john_record)
+        match command:
+            case "close" | "exit":
+                print("Good bye!")
+                break
+            case "hello":
+                print("How can I help you?")
+            case "add":
+                print(add_contact(args, contacts))
+            case "change":
+                print(change_contact(args,contacts))
+            case "phone":
+                print(show_phone(args, contacts))
+            case "all":
+                print(show_all(contacts))
+            case 'add-birthday':
+                print(add_birthday(args, contacts))
+            case 'show-birthday':
+                print(show_birthday(args, contacts))
+            case 'birthdays':
+                print(birthdays(contacts))
+            case _:
+                    print('''Invalid command. The following commands are available:\n'''
+                        '''add, change, phone, all, add-birthday, show-birthday, birthdays''')
 
-    # Створення та додавання нового запису для Jane
-    jane_record = Record("Jane")
-    jane_record.add_phone("9876543210")
-    book.add_record(jane_record)
-
-    # Виведення всіх записів у книзі
-    for name, record in book.data.items():
-        print(record)
-
-    # # Знаходження та редагування телефону для John
-    john = book.find("John")
-    john.edit_phone("1234567890", "1112223333")
-
-    print(john)  # Виведення: Contact name: John, phones: 1112223333; 5555555555
-
-    # # Пошук конкретного телефону у записі John
-    found_phone = john.find_phone("5555555555")
-    print(f"{john.name}: {found_phone}")  # Виведення: 5555555555
-
-    # # Видалення запису Jane
-    # book.delete("Jane")
-
-    # # Видалення 1 з телефонів запису John
-    john_record.remove_phone('5555555555')
-
-    # Виведення всіх записів у книзі
-    for name, record in book.data.items():
-        print(record)
-
-    # Виведення найближчих днів народжень:
-    book.get_upcoming_birthdays()
+if __name__ == "__main__":
+    main()

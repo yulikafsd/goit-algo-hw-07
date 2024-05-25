@@ -1,38 +1,31 @@
 from datetime import date
 from collections import UserDict
-from errors import SearchError
 
 
-# AddressBook: Клас для зберігання та управління записами.
-# книга контактів містить записи {'name': ['phone', 'phone']}
+# AddressBook: Клас для зберігання та управління записами
 class AddressBook(UserDict):
 
 
 # - Додавання записів - add_record, який додає запис до self.data.
     def add_record(self, record):
-        self.data[record.name.value] = record # ----------- Handle Error if bad value!
-    
-    def search(self, name):
-        if self.data.get(name) == None:
-            raise SearchError(f'There is no user with name {name}')
+        self.data[record.name.value] = record
+        print(f"New record for {record.name.value} was added")
 
 
 # - Пошук записів за іменем - find, який знаходить запис за ім'ям
     def find(self, name):
-        try:
-            self.search(name)
-            return self.data.get(name)
-        except SearchError as e:
-            print(f"Error! {e}")
+        record = self.data.get(name)
+        return record if record is not None else None
 
 
 # - Видалення записів за іменем - delete, який видаляє запис за ім'ям
     def delete(self, name):
-        try:
-            self.search(name)
+        record = self.find(name)
+        if record:
             del self.data[name]
-        except SearchError as e:
-            print(f"Error! {e}")
+            return f"{name} deleted from contacts"
+        else:
+            return f"No contact {name} was found"
 
 
 # - Пошук найближчих днів народжень
@@ -62,9 +55,8 @@ class AddressBook(UserDict):
                         case _:
                             congrat_date = this_year_bd
                     
-                    congrat_date_string = congrat_date.strftime('%d-%m-%Y')
+                    congrat_date_string = congrat_date.strftime('%d.%m.%Y')
                     bd_user = {'name' : user, 'congratulation_date': congrat_date_string}
                     upcoming_bd_users.append(bd_user)
             
-        print("List of congratultaions this week:", upcoming_bd_users)
-        return upcoming_bd_users
+        return f"List of congratultaions this week:{upcoming_bd_users}"

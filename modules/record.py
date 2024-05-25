@@ -14,19 +14,18 @@ class Record:
 
 
 # - Додавання телефонів add_phone
-    def add_phone(self, phone):
-        new_phone = Phone(phone)
+    def add_phone(self, phone):     # додати перевірку, чи додано вже такий номер
         try:
-            new_phone.validate()
+            new_phone = Phone(phone)
             self.phones.append(new_phone)
+            return f"{self.name.value}'s record was updated with a new number: {phone}"
         except ValidationError as e:
-            print(f"ERROR! {e}")
-        else:
-            print(f"{phone} has 10 digits and is added to {self.name}'s phones list")
+            return f"ERROR! No phone number was addded! {e}"
 
 
+# Повідомлення, що  у контакта немає вказаного номера, вивід наявних номерів
     def wrong_phone_alert(self, phone):
-        print(f'User {self.name} has no phone {phone}.\nPlease, choose one of the existing phone numbers:\n{chr(10).join(p.value for p in self.phones)}')
+        return f'User {self.name} has no phone {phone}.\nPlease, choose one of the existing phone numbers:\n{chr(10).join(p.value for p in self.phones)}'
 
 
 # - Пошук телефону (об'єкту Phone) - find_phone
@@ -42,8 +41,14 @@ class Record:
     def edit_phone(self, old_phone, new_phone):
         for phone in self.phones:
             if phone.value == old_phone:
-                phone.value = new_phone
-                return
+                try:
+                    new_phone_obj = Phone(new_phone)
+                    self.phones.append(new_phone_obj)
+                except ValidationError as e:
+                    return f"ERROR! No phone number was addded! {e}"
+                else:
+                    self.phones.remove(phone)
+                    return f"{self.name.value}'s record was updated with a new number: {new_phone}"
         return self.wrong_phone_alert(old_phone)
 
 
@@ -58,16 +63,29 @@ class Record:
 
 # - Додавання дня народження до контакту
     def add_birthday(self, birthday):
-        if self.birthday:
-            print(f"Contact {self.name.value} already has a birthday record")
-        else:
+        # Якщо у користувача ще немає дня народження, записати новий
+        if self.birthday is None:
             try:
                 self.birthday = Birthday(birthday)
+                return f"Birthday {birthday} is added to {self.name}'s record"
             except ValidationError as e:
-                print(f"ERROR! {e}")
+                return f"ERROR! {e}"
+            except ValueError as e:
+                return f"ERROR! Please, choose a real date, {e}"
+        
+        # якщо вже є день народження, спитати, чи перезаписати
+        else:
+            print(f"Contact {self.name.value} already has a birthday record")
+            user_input = input(f"Would you like to change {self.name.value}'s birth date? Y/N: ")
+            if user_input.lower() == 'n':
+                return "Nothing changed"
             else:
-                print(f"Birthday {birthday} is added to {self.name}'s record")
+                try:
+                    self.birthday = Birthday(birthday)
+                    return f"Birth date of {self.name} was changed to {birthday}"
+                except ValidationError as e:
+                    return f"ERROR! {e}"
 
 
     def __str__(self):
-        return f"Contact name: {self.name.value}, phones: {'; '.join(p.value for p in self.phones)}, birthday: {self.birthday.value if self.birthday != None else self.birthday}"
+        return f"Contact name: {self.name.value}; phones: {', '.join(p.value for p in self.phones)}; birthday: {self.birthday.value if self.birthday is not None else self.birthday}"
